@@ -8,6 +8,7 @@
 #ifndef ADC_USER_H_
 #define ADC_USER_H_
 
+//------ select ADC acquiring mode here ------
 #define ADC_DMA_METHOD
 //#define ADC_IT_METHOD
 //#define ADC_POLLING_METHOD

@@ -31,6 +31,7 @@ void User_ADC_Init(ADC_HandleTypeDef *hadc)
 #endif
 }
 
+//for polling method
 int get_ADC1_data()
 {
 	HAL_ADC_Start(&hadc1);
