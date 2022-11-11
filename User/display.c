@@ -12,8 +12,11 @@
 #include "comparator.h"
 #include "processing.h"
 
+extern UART_HandleTypeDef huart1;
+
 
 void Float_to_String_Conv(char* _flp_str, float num);
+void encode_transmit_data(int input, uint8_t* output);
 
 
 //-------------------- Variables --------------------
@@ -34,6 +37,9 @@ float fft_speed_ms;
 char top_str[16];
 char bottom_str[16];
 
+//uart transmition
+int 	trans_spd;
+uint8_t trans_msg[1];
 
 //-------------------- Functions --------------------
 void LCD_Init()
@@ -76,21 +82,25 @@ void LCD_Speed_Display()
 		{
 		case 0:
 			Float_to_String_Conv(_flp_str,comparator_speed_ms);
-			sprintf(bottom_str, "Spd: %s m/s ", _flp_str);
+			sprintf(bottom_str, "Spd: %s m/s  ", _flp_str);
+			trans_spd=comparator_speed_ms;
 			break;
 		case 1:
 		    //convert to kph and display
 			Float_to_String_Conv(_flp_str,comparator_speed_ms/3.6);
-			sprintf(bottom_str, "Spd: %s km/h", _flp_str);
+			sprintf(bottom_str, "Spd: %s km/h ", _flp_str);
+			trans_spd=comparator_speed_ms/3.6;
 			break;
 		case 2:
 		    //convert to mph
 			Float_to_String_Conv(_flp_str,comparator_speed_ms/2.24);
-			sprintf(bottom_str, "Spd: %s mph ", _flp_str);
+			sprintf(bottom_str, "Spd: %s mph  ", _flp_str);
+			trans_spd=comparator_speed_ms/2.24;
 			break;
 		default:
 			Float_to_String_Conv(_flp_str,comparator_speed_ms);
-		    sprintf(bottom_str, "Spd: %s m/s ", _flp_str);
+		    sprintf(bottom_str, "Spd: %s m/s  ", _flp_str);
+		    trans_spd=comparator_speed_ms;
 		    break;
 		}
 
@@ -107,21 +117,25 @@ void LCD_Speed_Display()
 		{
 		case 0:
 			Float_to_String_Conv(_flp_str,fft_speed_ms);
-			sprintf(bottom_str, "Spd: %s m/s ", _flp_str);
+			sprintf(bottom_str, "Spd: %s m/s  ", _flp_str);
+			trans_spd=fft_speed_ms;
 			break;
 		case 1:
 		    //convert to kph and display
 			Float_to_String_Conv(_flp_str,fft_speed_ms/3.6);
-			sprintf(bottom_str, "Spd: %s km/h", _flp_str);
+			sprintf(bottom_str, "Spd: %s km/h ", _flp_str);
+			trans_spd=fft_speed_ms/3.6;
 			break;
 		case 2:
 		    //convert to mph
 			Float_to_String_Conv(_flp_str,fft_speed_ms/2.24);
-			sprintf(bottom_str, "Spd: %s mph ", _flp_str);
+			sprintf(bottom_str, "Spd: %s mph  ", _flp_str);
+			trans_spd=fft_speed_ms/2.24;
 			break;
 		default:
 			Float_to_String_Conv(_flp_str,fft_speed_ms);
-		    sprintf(bottom_str, "Spd: %s m/s ", _flp_str);
+		    sprintf(bottom_str, "Spd: %s m/s  ", _flp_str);
+		    trans_spd=fft_speed_ms;
 		    break;
 		}
 
@@ -137,4 +151,20 @@ void LCD_Speed_Display()
 void Float_to_String_Conv(char* _flp_str, float num)
 {
 	sprintf(_flp_str,"%02d.%d",(int)num/1,(int)(num*100)%100);
+}
+
+void RS485_Data_Transmit()
+{
+	encode_transmit_data(trans_spd,trans_msg);
+	HAL_UART_Transmit(&huart1,trans_msg,1,1);
+}
+
+void encode_transmit_data(int input, uint8_t* output)
+{
+	if(input>=0 && input<10){
+		*output = input;
+	}
+	else if(input>9 && input<100){
+		*output = (input/10)<<4 | (input%10);
+	}
 }

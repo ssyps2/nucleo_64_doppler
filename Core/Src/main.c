@@ -60,24 +60,11 @@ int ADC_Conv_Freq=0;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-
+void encode_transmit_data(int input, uint8_t* output);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
-//for "printf" function
-//#ifdef __GNUC__
-//#define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
-//#else
-//#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
-//#endif
-//
-//PUTCHAR_PROTOTYPE
-//{
-//  HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
-//  return ch;
-//}
 
 /* USER CODE END 0 */
 
@@ -110,11 +97,11 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_DMA_Init();
-  MX_USART2_UART_Init();
   MX_ADC1_Init();
   MX_TIM6_Init();
   MX_TIM7_Init();
   MX_TIM3_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
 
   //------------ start timers -----------
@@ -141,7 +128,6 @@ int main(void)
 	  if(adc_i==FFT_LENGTH){
 		  User_FFT_Calculation(ADC_DATA_RD,fft_inputbuf,fft_outputbuf,&task_freq);
 		  adc_i=0;	//reset
-		  //LCD_Speed_Display();
 	  }
 #endif
 
@@ -151,15 +137,21 @@ int main(void)
 		  User_FFT_Calculation(ADC_DATA_RD,fft_inputbuf,fft_outputbuf,&task_freq);
 		  adc_i=0;
 		  IT_contine_flag=1;
+
 		  LCD_Speed_Display();
-		  HAL_Delay(10);
+		  RS485_Data_Transmit();
+
+		  HAL_Delay(20);
 	  }
 #endif
 
 #ifdef ADC_DMA_METHOD
 	  User_FFT_Calculation(ADC_DATA_RD,fft_inputbuf,fft_outputbuf,&task_freq);
+
 	  LCD_Speed_Display();
-	  HAL_Delay(10);
+	  RS485_Data_Transmit();
+
+	  HAL_Delay(20);
 #endif
 
     /* USER CODE END WHILE */

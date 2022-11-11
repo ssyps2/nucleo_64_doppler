@@ -14,5 +14,6 @@ extern int unit_value;
 void LCD_Init();
 void _Display_EXTI_Callback(uint16_t GPIO_Pin);
 void LCD_Speed_Display();
+void RS485_Data_Transmit();
 
 #endif /* DISPLAY_H_ */
