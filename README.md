@@ -59,3 +59,7 @@ LCD Driver found online.
 
 -> processing.c/.h
 FFT calculation part based on DSP Library.
+
+![Controller_Circuit_Nucleo_64](https://github.com/ssyps2/nucleo_64_doppler/assets/72872247/7daf8e9c-62d3-41f9-a902-8f01e8652278)
+
+![Display_Circuit_CPLD](https://github.com/ssyps2/nucleo_64_doppler/assets/72872247/3af9e337-7e89-4c07-b339-11041cd97bea)
